@@ -1,0 +1,22 @@
+{
+    "ContactDB": [
+        {
+            "id": 1,
+            "_name": "Sanket",
+            "_phoneNumber": "92 8888982041",
+            "_address": "Nashik",
+            "_city": "Nashik",
+            "_state": "Maharashtra",
+            "_zip": "422008"
+        },
+        {
+            "id": 2,
+            "_name": "Satej",
+            "_phoneNumber": "91 9822864251",
+            "_address": "Vashi",
+            "_city": "Mumbai",
+            "_state": "Maharashtra",
+            "_zip": "400030"
+        }
+    ]
+}
