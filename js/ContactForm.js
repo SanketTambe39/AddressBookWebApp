@@ -1,50 +1,49 @@
-let isUpdate = false;
+let isUpdate = false
+let contactObj = {}
+let server_url = " http://localhost:3000/EmployeePayrollDB/";
 window.addEventListener("DOMContentLoaded", (event) => {
     //validate first name
     const name = document.querySelector("#name");
-    const nameError = document.querySelector(".name-error");
     name.addEventListener("input", function () {
         if (name.value.length == 0) {
-            nameError.textContent = "";
+            setTextValue(".name-error", "")
             return;
         }
         try {
-            new Contact().name = name.value;
-            nameError.textContent = "";
+            checkName(name.value)
+            setTextValue(".name-error", "")
         } catch (error) {
-            nameError.textContent = error;
+            setTextValue(".name-error", error)
         }
     });
 
     //validation for phone number
     const phoneNumber = document.querySelector("#phoneNumber");
-    const numberError = document.querySelector(".tel-error");
     phoneNumber.addEventListener("input", function () {
         if (phoneNumber.value.length == 0) {
-            numberError.textContent = "";
+            setTextValue(".tel-error", "")
             return;
         }
         try {
-            new Contact().phoneNumber = phoneNumber.value;
-            numberError.textContent = "";
+            checkNumber(phoneNumber.value)
+            setTextValue(".tel-error", "")
         } catch (error) {
-            numberError.textContent = error;
+            setTextValue(".tel-error", error);
         }
     });
 
     //validation for zip code
     const zip = document.querySelector("#zip");
-    const zipError = document.querySelector(".zip-error");
     zip.addEventListener("input", function () {
         if (zip.value.length == 0) {
-            zipError.textContent = "";
+            setTextValue(".zip-error", "")
             return;
         }
         try {
-            new Contact().zip = zip.value;
-            zipError.textContent = "";
+            checkZip(zip.value)
+            setTextValue(".zip-error", "")
         } catch (error) {
-            zipError.textContent = error;
+            setTextValue(".zip-error", error)
         }
     });
     checkForUpdate();
@@ -53,27 +52,45 @@ window.addEventListener("DOMContentLoaded", (event) => {
 
 function save() {
     try {
-        let contact = createContact();
-        craeteAndUpdateStorage(contact)
+        setContactObject()
+        createAndUpdateStorage()
+        resetForm()
+        window.location.replace("../pages/AddressBookHome.html")
     } catch (error) {
         alert(error);
     }
 }
 
-function craeteAndUpdateStorage(contact) {
+function createAndUpdateStorage() {
     let contactList = JSON.parse(localStorage.getItem("ContactList"))
     if (contactList != undefined) {
-        contactList.push(contact)
+        let contactData = contactList.find(contactData => contactData.id == contactObj.id)
+        if (!contactData) {
+            contactList.push(createContact())
+        } else {
+            const index = contactList.map(contactData => contactData.id).indexOf(contactData.id)
+            contactList.splice(index, 1, createContact(contactData.id))
+        }
     } else {
-        contactList = [contact]
+        contactList = [createContact()]
     }
-    alert("Contact Added Sucessfully")
     localStorage.setItem("ContactList", JSON.stringify(contactList))
 }
 
-function createContact() {
-    let contact = new Contact();
-    contact.id = new Date().getTime();
+function createContact(id) {
+    let contact = new Contact()
+    if (!id) {
+        contact.id = generateId()
+    }
+    else {
+        contact.id = id
+    }
+    setContactData(contact)
+    return contact
+}
+
+
+function setContactData(contact) {
     try {
         contact.name = getInputValueById("#name");
     } catch (error) {
@@ -107,8 +124,8 @@ function createContact() {
         setTextValue(".zip-error", error);
         throw error;
     }
-
-    return contact;
+    console.log(contact.toString());
+    return contact
 }
 
 function getInputValueById(property) {
@@ -147,4 +164,42 @@ function setForm() {
     setValue("#city", contactObj._city);
     setValue("#state", contactObj._state);
     setValue("#zip", contactObj._zip);
+}
+
+function generateId() {
+    let empId = localStorage.getItem("ContactID")
+    empId = !empId ? 1 : (parseInt(empId) + 1).toString()
+    localStorage.setItem("ContactID", empId)
+    return empId
+}
+
+function setContactObject() {
+
+    try {
+        contactObj._name = getInputValueById("#name");
+    } catch (error) {
+        setTextValue(".name-error", error);
+        throw error;
+    }
+
+    try {
+        contactObj._phoneNumber = getInputValueById("#phoneNumber");
+    } catch (error) {
+        setTextValue(".tel-error", error);
+        throw error
+    }
+    contactObj._address = getInputValueById("#address");
+    contactObj._city = getInputValueById("#city");
+    contactObj._state = getInputValueById("#state");
+    try {
+        contactObj._zip = getInputValueById("#zip");
+    } catch (error) {
+        setTextValue(".zip-error", error);
+        throw error
+    }
+}
+
+function setTextValue(component, problem) {
+    let textError = document.querySelector(component);
+    textError.textContent = problem
 }
