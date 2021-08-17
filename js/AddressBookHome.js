@@ -1,8 +1,13 @@
 window.addEventListener("DOMContentLoaded", (event) => {
+    contactList = getContactFromStorage()
     document.querySelector(".contact-count").textContent = contactList.length;
     createInnerHtml();
 });
 
+const getContactFromStorage = () => {
+    return localStorage.getItem('contactList') ?
+        JSON.parse(localStorage.getItem('contactList')) : []
+}
 
 const createInnerHtml = () => {
     if (contactList.length == 0) {
