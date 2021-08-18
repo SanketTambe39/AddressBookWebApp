@@ -1,6 +1,6 @@
 let isUpdate = false
 let contactObj = {}
-let server_url = " http://localhost:3000/EmployeePayrollDB/";
+let server_url = " http://localhost:3000/ContactDB";
 window.addEventListener("DOMContentLoaded", (event) => {
     //validate first name
     const name = document.querySelector("#name");
